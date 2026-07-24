@@ -60,16 +60,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             KeyboardButton("Premium Users", request_users=KeyboardButtonRequestUsers(request_id=12, user_is_premium=True))
         ],
         [
-            KeyboardButton("Admin Groups", request_chat=KeyboardButtonRequestChat(request_id=10, chat_is_channel=False, user_privileges=ChatAdministratorRights.all_rights())),
-            KeyboardButton("Admin Channels", request_chat=KeyboardButtonRequestChat(request_id=11, chat_is_channel=True, user_privileges=ChatAdministratorRights.all_rights()))
+            KeyboardButton("Admin Groups", request_chat=KeyboardButtonRequestChat(request_id=10, chat_is_channel=False, user_administrator_rights=ChatAdministratorRights.all_rights())),
+            KeyboardButton("Admin Channels", request_chat=KeyboardButtonRequestChat(request_id=11, chat_is_channel=True, user_administrator_rights=ChatAdministratorRights.all_rights()))
         ],
         [
-            KeyboardButton("Admin Private Groups", request_chat=KeyboardButtonRequestChat(request_id=13, chat_is_channel=False, chat_has_username=False, user_privileges=ChatAdministratorRights.all_rights())),
-            KeyboardButton("Admin Public Groups", request_chat=KeyboardButtonRequestChat(request_id=14, chat_is_channel=False, chat_has_username=True, user_privileges=ChatAdministratorRights.all_rights()))
+            KeyboardButton("Admin Private Groups", request_chat=KeyboardButtonRequestChat(request_id=13, chat_is_channel=False, chat_has_username=False, user_administrator_rights=ChatAdministratorRights.all_rights())),
+            KeyboardButton("Admin Public Groups", request_chat=KeyboardButtonRequestChat(request_id=14, chat_is_channel=False, chat_has_username=True, user_administrator_rights=ChatAdministratorRights.all_rights()))
         ],
         [
-            KeyboardButton("Admin Private Channels", request_chat=KeyboardButtonRequestChat(request_id=15, chat_is_channel=True, chat_has_username=False, user_privileges=ChatAdministratorRights.all_rights())),
-            KeyboardButton("Admin Public Channels", request_chat=KeyboardButtonRequestChat(request_id=16, chat_is_channel=True, chat_has_username=True, user_privileges=ChatAdministratorRights.all_rights()))
+            KeyboardButton("Admin Private Channels", request_chat=KeyboardButtonRequestChat(request_id=15, chat_is_channel=True, chat_has_username=False, user_administrator_rights=ChatAdministratorRights.all_rights())),
+            KeyboardButton("Admin Public Channels", request_chat=KeyboardButtonRequestChat(request_id=16, chat_is_channel=True, chat_has_username=True, user_administrator_rights=ChatAdministratorRights.all_rights()))
         ]
     ]
     
