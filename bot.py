@@ -76,7 +76,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
     welcome_text = (
         "👋 ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ᴄʜᴀᴛ ɪɴꜰᴏ ʙᴏᴛ!\n\n"
-        "ᴛʜɪꜱ ʙᴏᴛ ʟᴇᴛꜱ ʏᴏᴜ ꜰᴇᴛᴄʜ ᴛʜᴇ ɪᴅ, ᴜꜱᴇʀɴᴀᴍᴇ, ɴᴀᴍᴇ ᴀɴᴅ ᴛʏᴘᴇ ᴏꜰ ᴀɴʏ ᴜꜱᴇʀ, ʙᴏᴛ, ɢʀᴏᴜᴘ ᴏʀ ᴄʜᴀɴɴᴇʟ — ɴᴏ ᴍᴀᴛᴛᴇʀ ᴛʜᴇɪʀ ᴘʀɪᴠᴀᴄʏ ꜱᴇᴛᴛɪɢꜱ.\n\n"
+        "ᴛʜɪꜱ ʙᴏᴛ ʟᴇᴛꜱ ʏᴏᴜ ꜰᴇᴛᴄʜ ᴛʜᴇ ɪᴅ, ᴜꜱᴇʀɴᴀᴍᴇ, ɴᴀᴍᴇ ᴀɴᴅ ᴛʏᴘᴇ ᴏꜰ ᴀɴʏ ᴜꜱᴇʀ, ʙᴏᴛ, ɢʀᴏᴜᴘ ᴏʀ ᴄʜᴀɴɴᴇʟ — ɴᴏ ᴍᴀᴛᴛᴇʀ ᴛʜᴇɪʀ ᴘʀɪᴠᴀᴄʏ ꜱᴇᴛᴛɪɴɢꜱ.\n\n"
         "📖 ʜᴏᴡ ᴛᴏ ᴜꜱᴇ\n\n"
         "👤 ꜱᴇʟᴇᴄᴛ ᴜꜱᴇʀꜱ — ɢᴇᴛ ɪᴅ ᴀɴᴅ ᴜꜱᴇʀɴᴀᴍᴇ ᴏꜰ ᴀɴʏ ᴛᴇʟᴇɢʀᴀᴍ ᴜꜱᴇʀ\n"
         "🤖 ꜱᴇʟᴇᴄᴛ ʙᴏᴛꜱ — ɢᴇᴛ ɪᴅ ᴀɴᴅ ᴜꜱᴇʀɴᴀᴍᴇ ᴏꜰ ᴀɴʏ ʙᴏᴛ\n"
@@ -101,7 +101,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def on_user_shared(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handles the result when a user is shared."""
-    user_id = update.message.user_shared.user_id
+    user_id = update.message.users_shared.user_ids[0]
     await update.message.reply_text(
         f"✅ **User Details Fetched!**\n\n"
         f"🆔 **ID:** `{user_id}`\n"
@@ -129,7 +129,7 @@ def main() -> None:
 
     # Handlers
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(MessageHandler(filters.StatusUpdate.USER_SHARED, on_user_shared))
+    application.add_handler(MessageHandler(filters.StatusUpdate.USERS_SHARED, on_user_shared))
     application.add_handler(MessageHandler(filters.StatusUpdate.CHAT_SHARED, on_chat_shared))
 
     # Run the bot
