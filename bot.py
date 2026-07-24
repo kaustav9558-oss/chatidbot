@@ -1,46 +1,82 @@
 
 import os
 import logging
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters, CallbackQueryHandler
+from telegram import (
+    Update, 
+    ReplyKeyboardMarkup, 
+    KeyboardButton, 
+    KeyboardButtonRequestUsers, 
+    KeyboardButtonRequestChat,
+    ChatPrivileges
+)
+from telegram.ext import (
+    Application, 
+    CommandHandler, 
+    ContextTypes, 
+    MessageHandler, 
+    filters
+)
+from dotenv import load_dotenv
+
+# Load environment variables from .env file if it exists
+load_dotenv()
 
 # Enable logging
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
-# set higher logging level for httpx to avoid all GET and POST requests being logged
 logging.getLogger("httpx").setLevel(logging.WARNING)
-
 logger = logging.getLogger(__name__)
 
 # Fetch bot token from environment variable
 TOKEN = os.getenv("BOT_TOKEN")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Sends a welcome message and the main menu with buttons."""
+    """Sends a welcome message and the main menu with native picker buttons."""
+    
+    # Define the keyboard with native request buttons
     keyboard = [
-        [InlineKeyboardButton("Select Users", callback_data="select_users"),
-         InlineKeyboardButton("Select Bots", callback_data="select_bots")],
-        [InlineKeyboardButton("Select Channels", callback_data="select_channels")],
-        [InlineKeyboardButton("Private Channels", callback_data="private_channels"),
-         InlineKeyboardButton("Public Channels", callback_data="public_channels")],
-        [InlineKeyboardButton("Select Groups", callback_data="select_groups")],
-        [InlineKeyboardButton("Private Groups", callback_data="private_groups"),
-         InlineKeyboardButton("Public Groups", callback_data="public_groups")],
-        [InlineKeyboardButton("Select Premium Users", callback_data="select_premium_users")],
-        [InlineKeyboardButton("Premium Users", callback_data="premium_users")],
-        [InlineKeyboardButton("Admin Groups", callback_data="admin_groups"),
-         InlineKeyboardButton("Admin Channels", callback_data="admin_channels")],
-        [InlineKeyboardButton("Admin Private Groups", callback_data="admin_private_groups"),
-         InlineKeyboardButton("Admin Public Groups", callback_data="admin_public_groups")],
-        [InlineKeyboardButton("Admin Private Channels", callback_data="admin_private_channels"),
-         InlineKeyboardButton("Admin Public Channels", callback_data="admin_public_channels")],
+        [
+            KeyboardButton("Select Users", request_users=KeyboardButtonRequestUsers(request_id=1, user_is_bot=False)),
+            KeyboardButton("Select Bots", request_users=KeyboardButtonRequestUsers(request_id=2, user_is_bot=True))
+        ],
+        [
+            KeyboardButton("Select Channels", request_chat=KeyboardButtonRequestChat(request_id=3, chat_is_channel=True))
+        ],
+        [
+            KeyboardButton("Private Channels", request_chat=KeyboardButtonRequestChat(request_id=4, chat_is_channel=True, chat_has_username=False)),
+            KeyboardButton("Public Channels", request_chat=KeyboardButtonRequestChat(request_id=5, chat_is_channel=True, chat_has_username=True))
+        ],
+        [
+            KeyboardButton("Select Groups", request_chat=KeyboardButtonRequestChat(request_id=6, chat_is_channel=False))
+        ],
+        [
+            KeyboardButton("Private Groups", request_chat=KeyboardButtonRequestChat(request_id=7, chat_is_channel=False, chat_has_username=False)),
+            KeyboardButton("Public Groups", request_chat=KeyboardButtonRequestChat(request_id=8, chat_is_channel=False, chat_has_username=True))
+        ],
+        [
+            KeyboardButton("Select Premium Users", request_users=KeyboardButtonRequestUsers(request_id=9, user_is_premium=True)),
+            KeyboardButton("Premium Users", request_users=KeyboardButtonRequestUsers(request_id=12, user_is_premium=True))
+        ],
+        [
+            KeyboardButton("Admin Groups", request_chat=KeyboardButtonRequestChat(request_id=10, chat_is_channel=False, user_privileges=ChatPrivileges(can_manage_chat=True))),
+            KeyboardButton("Admin Channels", request_chat=KeyboardButtonRequestChat(request_id=11, chat_is_channel=True, user_privileges=ChatPrivileges(can_manage_chat=True)))
+        ],
+        [
+            KeyboardButton("Admin Private Groups", request_chat=KeyboardButtonRequestChat(request_id=13, chat_is_channel=False, chat_has_username=False, user_privileges=ChatPrivileges(can_manage_chat=True))),
+            KeyboardButton("Admin Public Groups", request_chat=KeyboardButtonRequestChat(request_id=14, chat_is_channel=False, chat_has_username=True, user_privileges=ChatPrivileges(can_manage_chat=True)))
+        ],
+        [
+            KeyboardButton("Admin Private Channels", request_chat=KeyboardButtonRequestChat(request_id=15, chat_is_channel=True, chat_has_username=False, user_privileges=ChatPrivileges(can_manage_chat=True))),
+            KeyboardButton("Admin Public Channels", request_chat=KeyboardButtonRequestChat(request_id=16, chat_is_channel=True, chat_has_username=True, user_privileges=ChatPrivileges(can_manage_chat=True)))
+        ]
     ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     
     welcome_text = (
-        "👋 ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ᴄʜᴀᴛ ɪᴅ ɪɴꜰᴏ ʙᴏᴛ!\n\n"
-        "ᴛʜɪꜱ ʙᴏᴛ ʟᴇᴛꜱ ʏᴏᴜ ꜰᴇᴛᴄʜ ᴛʜᴇ ɪᴅ, ᴜꜱᴇʀɴᴀᴍᴇ, ɴᴀᴍᴇ ᴀɴᴅ ᴛʏᴘᴇ ᴏꜰ ᴀɴʏ ᴜꜱᴇʀ, ʙᴏᴛ, ɢʀᴏᴜᴘ ᴏʀ ᴄʜᴀɴɴᴇʟ — ɴᴏ ᴍᴀᴛᴛᴇʀ ᴛʜᴇɪʀ ᴘʀɪᴠᴀᴄʏ ꜱᴇᴛᴛɪɴɢꜱ.\n\n"
+        "👋 ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ᴄʜᴀᴛ ɪɴꜰᴏ ʙᴏᴛ!\n\n"
+        "ᴛʜɪꜱ ʙᴏᴛ ʟᴇᴛꜱ ʏᴏᴜ ꜰᴇᴛᴄʜ ᴛʜᴇ ɪᴅ, ᴜꜱᴇʀɴᴀᴍᴇ, ɴᴀᴍᴇ ᴀɴᴅ ᴛʏᴘᴇ ᴏꜰ ᴀɴʏ ᴜꜱᴇʀ, ʙᴏᴛ, ɢʀᴏᴜᴘ ᴏʀ ᴄʜᴀɴɴᴇʟ — ɴᴏ ᴍᴀᴛᴛᴇʀ ᴛʜᴇɪʀ ᴘʀɪᴠᴀᴄʏ ꜱᴇᴛᴛɪɢꜱ.\n\n"
         "📖 ʜᴏᴡ ᴛᴏ ᴜꜱᴇ\n\n"
         "👤 ꜱᴇʟᴇᴄᴛ ᴜꜱᴇʀꜱ — ɢᴇᴛ ɪᴅ ᴀɴᴅ ᴜꜱᴇʀɴᴀᴍᴇ ᴏꜰ ᴀɴʏ ᴛᴇʟᴇɢʀᴀᴍ ᴜꜱᴇʀ\n"
         "🤖 ꜱᴇʟᴇᴄᴛ ʙᴏᴛꜱ — ɢᴇᴛ ɪᴅ ᴀɴᴅ ᴜꜱᴇʀɴᴀᴍᴇ ᴏꜰ ᴀɴʏ ʙᴏᴛ\n"
@@ -63,20 +99,25 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
     await update.message.reply_text(welcome_text, reply_markup=reply_markup)
 
-async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Parses the CallbackQuery and updates the message text."""
-    query = update.callback_query
-    await query.answer()
-    await query.edit_message_text(text=f"Selected option: {query.data}")
+async def on_user_shared(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handles the result when a user is shared."""
+    user_id = update.message.user_shared.user_id
+    await update.message.reply_text(
+        f"✅ **User Details Fetched!**\n\n"
+        f"🆔 **ID:** `{user_id}`\n"
+        f"👤 **Type:** User/Bot",
+        parse_mode="Markdown"
+    )
 
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Sends a message when the command /help is issued."""
-    await update.message.reply_text("Use /start to see the main menu.")
-
-async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Echoes the user's chat ID."""
-    chat_id = update.effective_chat.id
-    await update.message.reply_text(f"Your Chat ID is: {chat_id}")
+async def on_chat_shared(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handles the result when a chat (group/channel) is shared."""
+    chat_id = update.message.chat_shared.chat_id
+    await update.message.reply_text(
+        f"✅ **Chat Details Fetched!**\n\n"
+        f"🆔 **ID:** `{chat_id}`\n"
+        f"📢 **Type:** Group/Channel",
+        parse_mode="Markdown"
+    )
 
 def main() -> None:
     """Start the bot."""
@@ -84,20 +125,15 @@ def main() -> None:
         logger.error("No BOT_TOKEN environment variable found.")
         return
 
-    # Create the Application and pass it your bot's token.
     application = Application.builder().token(TOKEN).build()
 
-    # on different commands - answer in Telegram
+    # Handlers
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("help", help_command))
-    application.add_handler(CommandHandler("id", get_chat_id))
+    application.add_handler(MessageHandler(filters.StatusUpdate.USER_SHARED, on_user_shared))
+    application.add_handler(MessageHandler(filters.StatusUpdate.CHAT_SHARED, on_chat_shared))
 
-    # on non command i.e message - echo the message on Telegram
-    application.add_handler(CallbackQueryHandler(button))
-
-    # Run the bot until the user presses Ctrl-C
+    # Run the bot
     application.run_polling(allowed_updates=Update.ALL_TYPES)
-
 
 if __name__ == "__main__":
     main()
