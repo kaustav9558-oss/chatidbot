@@ -9,7 +9,11 @@ from telegram import (
     KeyboardButton, 
     KeyboardButtonRequestUsers, 
     KeyboardButtonRequestChat,
-    ChatAdministratorRights
+    ChatAdministratorRights,
+    MessageOriginUser,
+    MessageOriginHiddenUser,
+    MessageOriginChat,
+    MessageOriginChannel
 )
 from telegram.ext import (
     Application, 
@@ -166,6 +170,61 @@ async def on_chat_shared(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         logger.error(f"Error in on_chat_shared: {e}")
         await update.message.reply_text(f"❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ ᴡʜɪʟᴇ ꜰᴇᴛᴄʜɪɴɢ ᴄʜᴀᴛ ᴅᴇᴛᴀɪʟꜱ.{ERROR_FOOTER}", parse_mode=ParseMode.MARKDOWN)
 
+async def on_forwarded(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handles any forwarded message and shows the original sender/chat details."""
+    try:
+        origin = update.message.forward_origin
+        if isinstance(origin, MessageOriginUser):
+            u = origin.sender_user
+            uname = f"@{u.username}" if u.username else "N/A"
+            name = " ".join(filter(None, [u.first_name, u.last_name])) or "N/A"
+            typ = "ʙᴏᴛ" if u.is_bot else "ᴜꜱᴇʀ"
+            text = (
+                f"✅ **ꜰᴏʀᴡᴀʀᴅᴇᴅ ꜰʀᴏᴍ ᴜꜱᴇʀ!**\n\n"
+                f"🆔 **ɪᴅ:** `{u.id}`\n"
+                f"👤 **ɴᴀᴍᴇ:** {name}\n"
+                f"🔗 **ᴜꜱᴇʀɴᴀᴍᴇ:** {uname}\n"
+                f"🤖 **ᴛʏᴘᴇ:** {typ}\n\n"
+                f"{DEVELOPER_CREDIT}"
+            )
+        elif isinstance(origin, MessageOriginHiddenUser):
+            text = (
+                f"✅ **ꜰᴏʀᴡᴀʀᴅᴇᴅ ꜰʀᴏᴍ ʜɪᴅᴅᴇɴ ᴜꜱᴇʀ!**\n\n"
+                f"👤 **ɴᴀᴍᴇ:** {origin.sender_user_name}\n"
+                f"ℹ️ ᴛʜᴇ ᴜꜱᴇʀ ʜɪᴅ ᴛʜᴇɪʀ ᴘʀᴏꜰɪʟᴇ — ɪᴅ ɴᴏᴛ ᴀᴠᴀɪʟᴀʙʟᴇ\n\n"
+                f"{DEVELOPER_CREDIT}"
+            )
+        elif isinstance(origin, MessageOriginChat):
+            c = origin.sender_chat
+            uname = f"@{c.username}" if c.username else "N/A"
+            typ = "ɢʀᴏᴜᴘ" if c.type in ("group", "supergroup") else c.type.upper()
+            text = (
+                f"✅ **ꜰᴏʀᴡᴀʀᴅᴇᴅ ꜰʀᴏᴍ ᴄʜᴀᴛ!**\n\n"
+                f"🆔 **ɪᴅ:** `{c.id}`\n"
+                f"📛 **ᴛɪᴛʟᴇ:** {c.title or 'N/A'}\n"
+                f"🔗 **ᴜꜱᴇʀɴᴀᴍᴇ:** {uname}\n"
+                f"📢 **ᴛʏᴘᴇ:** {typ}\n\n"
+                f"{DEVELOPER_CREDIT}"
+            )
+        elif isinstance(origin, MessageOriginChannel):
+            c = origin.chat
+            uname = f"@{c.username}" if c.username else "N/A"
+            text = (
+                f"✅ **ꜰᴏʀᴡᴀʀᴅᴇᴅ ꜰʀᴏᴍ ᴄʜᴀɴɴᴇʟ!**\n\n"
+                f"🆔 **ɪᴅ:** `{c.id}`\n"
+                f"📛 **ᴛɪᴛʟᴇ:** {c.title or 'N/A'}\n"
+                f"🔗 **ᴜꜱᴇʀɴᴀᴍᴇ:** {uname}\n"
+                f"📢 **ᴛʏᴘᴇ:** ᴄʜᴀɴɴᴇʟ\n\n"
+                f"{DEVELOPER_CREDIT}"
+            )
+        else:
+            text = f"❌ ᴄᴏᴜʟᴅ ɴᴏᴛ ʀᴇᴀᴅ ᴛʜᴇ ꜰᴏʀᴡᴀʀᴅ ᴏʀɪɢɪɴ.{ERROR_FOOTER}"
+
+        await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+    except Exception as e:
+        logger.error(f"Error in on_forwarded: {e}")
+        await update.message.reply_text(f"❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ ᴡʜɪʟᴇ ꜰᴇᴛᴄʜɪɴɢ ꜰᴏʀᴡᴀʀᴅ ᴅᴇᴛᴀɪʟꜱ.{ERROR_FOOTER}", parse_mode=ParseMode.MARKDOWN)
+
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Log the error and send a message to the user."""
     logger.error(f"Exception while handling an update: {context.error}")
@@ -207,6 +266,7 @@ def main() -> None:
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.StatusUpdate.USERS_SHARED, on_user_shared))
     application.add_handler(MessageHandler(filters.StatusUpdate.CHAT_SHARED, on_chat_shared))
+    application.add_handler(MessageHandler(filters.FORWARDED, on_forwarded))
     
     # Global error handler
     application.add_error_handler(error_handler)
