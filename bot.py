@@ -7,7 +7,7 @@ from telegram import (
     KeyboardButton, 
     KeyboardButtonRequestUsers, 
     KeyboardButtonRequestChat,
-    ChatPrivileges
+    ChatAdministratorRights
 )
 from telegram.ext import (
     Application, 
@@ -35,6 +35,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Sends a welcome message and the main menu with native picker buttons."""
     
     # Define the keyboard with native request buttons
+    # Note: user_privileges uses ChatAdministratorRights in PTB
     keyboard = [
         [
             KeyboardButton("Select Users", request_users=KeyboardButtonRequestUsers(request_id=1, user_is_bot=False)),
@@ -59,16 +60,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             KeyboardButton("Premium Users", request_users=KeyboardButtonRequestUsers(request_id=12, user_is_premium=True))
         ],
         [
-            KeyboardButton("Admin Groups", request_chat=KeyboardButtonRequestChat(request_id=10, chat_is_channel=False, user_privileges=ChatPrivileges(can_manage_chat=True))),
-            KeyboardButton("Admin Channels", request_chat=KeyboardButtonRequestChat(request_id=11, chat_is_channel=True, user_privileges=ChatPrivileges(can_manage_chat=True)))
+            KeyboardButton("Admin Groups", request_chat=KeyboardButtonRequestChat(request_id=10, chat_is_channel=False, user_privileges=ChatAdministratorRights.all_names())),
+            KeyboardButton("Admin Channels", request_chat=KeyboardButtonRequestChat(request_id=11, chat_is_channel=True, user_privileges=ChatAdministratorRights.all_names()))
         ],
         [
-            KeyboardButton("Admin Private Groups", request_chat=KeyboardButtonRequestChat(request_id=13, chat_is_channel=False, chat_has_username=False, user_privileges=ChatPrivileges(can_manage_chat=True))),
-            KeyboardButton("Admin Public Groups", request_chat=KeyboardButtonRequestChat(request_id=14, chat_is_channel=False, chat_has_username=True, user_privileges=ChatPrivileges(can_manage_chat=True)))
+            KeyboardButton("Admin Private Groups", request_chat=KeyboardButtonRequestChat(request_id=13, chat_is_channel=False, chat_has_username=False, user_privileges=ChatAdministratorRights.all_names())),
+            KeyboardButton("Admin Public Groups", request_chat=KeyboardButtonRequestChat(request_id=14, chat_is_channel=False, chat_has_username=True, user_privileges=ChatAdministratorRights.all_names()))
         ],
         [
-            KeyboardButton("Admin Private Channels", request_chat=KeyboardButtonRequestChat(request_id=15, chat_is_channel=True, chat_has_username=False, user_privileges=ChatPrivileges(can_manage_chat=True))),
-            KeyboardButton("Admin Public Channels", request_chat=KeyboardButtonRequestChat(request_id=16, chat_is_channel=True, chat_has_username=True, user_privileges=ChatPrivileges(can_manage_chat=True)))
+            KeyboardButton("Admin Private Channels", request_chat=KeyboardButtonRequestChat(request_id=15, chat_is_channel=True, chat_has_username=False, user_privileges=ChatAdministratorRights.all_names())),
+            KeyboardButton("Admin Public Channels", request_chat=KeyboardButtonRequestChat(request_id=16, chat_is_channel=True, chat_has_username=True, user_privileges=ChatAdministratorRights.all_names()))
         ]
     ]
     
@@ -101,10 +102,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def on_user_shared(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handles the result when a user is shared."""
-    user_id = update.message.users_shared.user_ids[0]
+    user_ids = update.message.users_shared.user_ids
     await update.message.reply_text(
         f"✅ **User Details Fetched!**\n\n"
-        f"🆔 **ID:** `{user_id}`\n"
+        f"🆔 **ID:** `{user_ids[0]}`\n"
         f"👤 **Type:** User/Bot",
         parse_mode="Markdown"
     )
