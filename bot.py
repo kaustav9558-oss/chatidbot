@@ -122,9 +122,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             "🔒 ᴀᴅᴍɪɴ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀɴɴᴇʟꜱ — ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀɴɴᴇʟꜱ ᴡʜᴇʀᴇ ʏᴏᴜ ᴀʀᴇ ᴀɴ ᴀᴅᴍɪɴ\n"
             "🌐 ᴀᴅᴍɪɴ ᴘᴜʙʟɪᴄ ᴄʜᴀɴɴᴇʟꜱ — ᴘᴜʙʟɪᴄ ᴄʜᴀɴɴᴇʟꜱ ᴡʜᴇʀᴇ ʏᴏᴜ ᴀʀᴇ ᴀɴ ᴀᴅᴍɪɴ\n"
             "🏠 ᴏᴡɴᴇᴅ ᴘʀɪᴠᴀᴛᴇ ɢʀᴏᴜᴘꜱ — ɢʀᴏᴜᴘꜱ ʏᴏᴜ ᴏᴡɴ ᴡɪᴛʜᴏᴜᴛ ᴀ ᴜꜱᴇʀɴᴀᴍᴇ\n"
-"🌐 ᴏᴡɴᴇᴅ ᴘᴜʙʟɪᴄ ɢʀᴏᴜᴘꜱ — ɢʀᴏᴜᴘꜱ ʏᴏᴜ ᴏᴡɴ ᴡɪᴛʜ ᴀ ᴜꜱᴇʀɴᴀᴍᴇ\n"
-"🏠 ᴏᴡɴᴇᴅ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀɴɴᴇʟꜱ — ᴄʜᴀɴɴᴇʟꜱ ʏᴏᴜ ᴏᴡɴ ᴡɪᴛʜᴏᴜᴛ ᴀ ᴜꜱᴇʀɴᴀᴍᴇ\n"
-"🌐 ᴏᴡɴᴇᴅ ᴘᴜʙʟɪᴄ ᴄʜᴀɴɴᴇʟꜱ — ᴄʜᴀɴɴᴇʟꜱ ʏᴏᴜ ᴏᴡɴ ᴡɪᴛʜ ᴀ ᴜꜱᴇʀɴᴀᴍᴇ\n\n"
+            "🌐 ᴏᴡɴᴇᴅ ᴘᴜʙʟɪᴄ ɢʀᴏᴜᴘꜱ — ɢʀᴏᴜᴘꜱ ʏᴏᴜ ᴏᴡɴ ᴡɪᴛʜ ᴀ ᴜꜱᴇʀɴᴀᴍᴇ\n"
+            "🏠 ᴏᴡɴᴇᴅ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀɴɴᴇʟꜱ — ᴄʜᴀɴɴᴇʟꜱ ʏᴏᴜ ᴏᴡɴ ᴡɪᴛʜᴏᴜᴛ ᴀ ᴜꜱᴇʀɴᴀᴍᴇ\n"
+            "🌐 ᴏᴡɴᴇᴅ ᴘᴜʙʟɪᴄ ᴄʜᴀɴɴᴇʟꜱ — ᴄʜᴀɴɴᴇʟꜱ ʏᴏᴜ ᴏᴡɴ ᴡɪᴛʜ ᴀ ᴜꜱᴇʀɴᴀᴍᴇ\n\n"
             "👇 ᴊᴜꜱᴛ ᴛᴀᴘ ᴀ ʙᴜᴛᴛᴏɴ ʙᴇʟᴏᴡ, ᴘɪᴄᴋ ꜰʀᴏᴍ ᴛʜᴇ ɴᴀᴛɪᴠᴇ ᴛᴇʟᴇɢʀᴀᴍ ʟɪꜱᴛ, ᴀɴᴅ ᴛʜᴇ ᴅᴇᴛᴀɪʟꜱ ᴡɪʟʟ ʙᴇ ꜱᴇɴᴛ ɪɴꜱᴛᴀɴᴛʟʏ\n\n"
             f"{DEVELOPER_CREDIT}"
         )
@@ -137,10 +137,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def on_user_shared(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handles the result when a user is shared."""
     try:
-        user_ids = update.message.users_shared.user_ids
+        user_ids = update.message.users_shared.users
         await update.message.reply_text(
             f"✅ **ᴜꜱᴇʀ ᴅᴇᴛᴀɪʟꜱ ꜰᴇᴛᴄʜᴇᴅ!**\n\n"
-            f"🆔 **ɪᴅ:** `{user_ids[0]}`\n"
+            f"🆔 **ɪᴅ:** `{user_ids[0].user_id}`\n"
             f"👤 **ᴛʏᴘᴇ:** ᴜꜱᴇʀ/ʙᴏᴛ\n\n"
             f"{DEVELOPER_CREDIT}",
             parse_mode=ParseMode.MARKDOWN,
