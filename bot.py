@@ -88,6 +88,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             [
                 KeyboardButton("Admin Private Channels", request_chat=KeyboardButtonRequestChat(request_id=15, chat_is_channel=True, chat_has_username=False, user_administrator_rights=ChatAdministratorRights.all_rights())),
                 KeyboardButton("Admin Public Channels", request_chat=KeyboardButtonRequestChat(request_id=16, chat_is_channel=True, chat_has_username=True, user_administrator_rights=ChatAdministratorRights.all_rights()))
+            ],
+            [
+                KeyboardButton("Owned Private Groups", request_chat=KeyboardButtonRequestChat(request_id=17, chat_is_channel=False, chat_has_username=False, chat_is_created=True)),
+                KeyboardButton("Owned Public Groups", request_chat=KeyboardButtonRequestChat(request_id=18, chat_is_channel=False, chat_has_username=True, chat_is_created=True))
+            ],
+            [
+                KeyboardButton("Owned Private Channels", request_chat=KeyboardButtonRequestChat(request_id=19, chat_is_channel=True, chat_has_username=False, chat_is_created=True)),
+                KeyboardButton("Owned Public Channels", request_chat=KeyboardButtonRequestChat(request_id=20, chat_is_channel=True, chat_has_username=True, chat_is_created=True))
             ] 
         ]
         
