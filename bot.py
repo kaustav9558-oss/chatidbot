@@ -1,4 +1,3 @@
-
 import os
 import logging
 import asyncio
@@ -89,7 +88,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             [
                 KeyboardButton("Admin Private Channels", request_chat=KeyboardButtonRequestChat(request_id=15, chat_is_channel=True, chat_has_username=False, user_administrator_rights=ChatAdministratorRights.all_rights())),
                 KeyboardButton("Admin Public Channels", request_chat=KeyboardButtonRequestChat(request_id=16, chat_is_channel=True, chat_has_username=True, user_administrator_rights=ChatAdministratorRights.all_rights()))
-            ]
+            ] 
         ]
         
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
@@ -177,7 +176,7 @@ def main() -> None:
     # 1. Increase concurrent updates handling
     # 2. Use a high number of workers for background tasks
     # 3. Configure request parameters for speed
-    defaults = Defaults(parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+    defaults = Defaults(parse_mode=ParseMode.MARKDOWN)
     
     application = (
         Application.builder()
